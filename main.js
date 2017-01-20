@@ -233,15 +233,24 @@ var removeHide = function(item) {
         item.classList.remove('hide')
     }
 }
+/*
+1.遍历格子上的每个数，把没有显示出来的都给显示出来，如果显示出来则不动
+*/
 
-// var judgesingle = function(value ) {
-//     if(value != '雷' && value != '0') {
-//         removeHide(item)
-//     }
-//     if(value ==0){
-//         markAround2()
-//     }
-// }
+//当扫到雷时把游戏里面所有的空格都显示出来
+var endshow = function(item,divarray) {
+    var all = document.querySelectorAll('.single')
+    for (var i = 0; i < all.length; i++) {
+        var single = all[i]
+        var value = single.innerHTML
+        if(value == 0) {
+            single.classList.add('showZero')
+        }else {
+            single.classList.remove('hide')
+        }
+    }
+
+}
 // bind click
 var bindSingle = function() {
     var divarray = divArray()
@@ -254,6 +263,8 @@ var bindSingle = function() {
         var yIndex = parseInt(item.id.split('-')[1][1])
         if(value == '雷') {
             removeHide(item)
+            //遍历出所有元素。
+            endshow()
             alert('你输了')
         }
         else if(value == 0) {

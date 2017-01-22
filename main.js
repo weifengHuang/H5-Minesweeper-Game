@@ -251,17 +251,38 @@ var endshow = function(item,divarray) {
     }
 
 }
+
+var addTime = function() {
+    var startTime = e('#start-time')
+    var time = parseInt(startTime.innerHTML)
+    var time = time + 1
+    startTime.innerHTML = time
+}
+var controlTime = function(index){
+    var startTime = e('#start-time')
+    if (index =='start') {
+        if (!startTime.classList.contains('time')) {
+            startTime.classList.add('time')
+             timer1 =setInterval('addTime()',1000)
+        }
+   }else if (index =='stop') {
+       clearInterval(timer1)
+   }
+}
+
 // bind click
 var bindSingle = function() {
     var divarray = divArray()
     var container = e('.container')
     bindEvent(container, 'click', function(event){
+        controlTime('start')
         var item = event.target
         var value = item.innerHTML
         //获取click的方格ID的数组编号
         var xIndex = parseInt(item.id.split('-')[1][0])
         var yIndex = parseInt(item.id.split('-')[1][1])
         if(value == '雷') {
+            controlTime('stop')
             removeHide(item)
             //遍历出所有元素。
             endshow()

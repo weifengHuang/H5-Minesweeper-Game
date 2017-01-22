@@ -48,18 +48,45 @@
                 border: 1px solid#27cdf0;
                 box-sizing: border-box;
             }
-            .time {
+            .topShow {
                 height:50px;
-                border-bottom: 1px solid#27cdf0;
+                border-bottom: 1px solid #27cdf0;
+                display: flex;
             }
+            .item{
+                display: flex;
+                flex: 1;
+                justify-content: center;
+                align-items: center;
+            }
+            .item:nth-child(2){
+                flex:0.4
+            }
+
+            .item + .item {
+                border-left: 1px solid #27cdf0;
+            }
+
+            #start-time{
+                flex-grow: 0.5;
+                text-align: center;
+            }
+
         </style>
     </head>
     <body>
     <div class="">
 
         <div class="container">
-            <div class="time">
-                dfds
+            <div class="topShow">
+                <div class="item">
+                    <span>所用时间</span>
+                    <span id="start-time">0</span>
+                </div>
+                <div class="item">
+                </div>
+                <div class="item">
+                </div>
             </div>
             <div class="square">
                 <div id='id-00'class="single "></div>

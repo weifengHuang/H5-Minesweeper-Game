@@ -108,18 +108,27 @@ var CreateArray = function() {
     return array
 }
 //随机插入雷, n为雷的个数
-var boom = function(array,n) {
-    for (var i = 0; i < n; i++) {
+var boom = function(array, n) {
+    for (var i = 0; i < n; ) {
         var x = random9()
         var y = random9()
-        array[x][y] = '雷'
+        var id = '#id-'+String(x) + String(y)
+        var s = document.querySelector(id)
+        //避免x，y出现重复的情况
+        if (! s.classList.contains('boom')) {
+            i++
+            s.classList.add('boom')
+            array[x][y] = '雷'
+        }
     }
     return array
 }
 //生成带雷矩阵
 var CreateBoomArray = function() {
     var array = CreateArray()
-    var boomArray = boom(array,10)
+    //设置随机雷的个数
+    var boomnum = 15
+    var boomArray = boom(array,boomnum)
     return boomArray
 }
 
@@ -154,9 +163,19 @@ var showArray = function(array) {
         }
     }
 }
+// 屏蔽右键菜单
+var forbidRightShow = function() {
+    var container = e('.container')
+    container.oncontextmenu = function(){
+        return false
+    }
+}
 var initShow = function() {
+    forbidRightShow()
+    //导入雷矩阵
     var array = CreateBoomArray()
     showArray(array)
+    //导入雷旁边的个数
     var divarray = divArray()
     var markarray = markedSquare(divarray)
     showArray(markarray)
@@ -179,6 +198,19 @@ var divArray = function() {
         }
     }
     return divarray
+}
+// 从html里面获取此时雷的个数
+var getBoomNum = function() {
+    var htmlArray = divArray()
+    var boomNum = 0
+    for (var i = 0; i < htmlArray.length; i++) {
+        for (var j = 0; j < htmlArray.length; j++) {
+            if(htmlArray[i][j] == '雷') {
+                boomNum += 1
+            }
+        }
+    }
+    return boomNum
 }
 
 //点击是0则显示zero样式
@@ -269,35 +301,74 @@ var controlTime = function(index){
        clearInterval(timer1)
    }
 }
+var downMark = function() {
+    var showMark = e('#id-showmark')
+    var num = parseInt(showMark.innerHTML)
+    if(num <= 0) {
+        showMark.innerHTML= 0
+    }else {
+        num -= 1
+        showMark.innerHTML = num
+    }
+}
 
+var markFlag = function(item) {
+    var template = `
+        <img src="./image/红旗.png" alt="1">
+    `
+    var innerHTML = item.innerHTML
+    item.innerHTML = null
+    appendHtml(item, template)
+}
+var judegeWin = function() {
+    var boom = getBoomNum()
+    if(boom == 0){
+        alert('你赢了')
+    }
+}
 // bind click
 var bindSingle = function() {
     var divarray = divArray()
     var container = e('.container')
-    bindEvent(container, 'click', function(event){
+    var showMark = e('#id-showmark')
+    bindEvent(container, 'mousedown', function(event){
+        var num = parseInt(showMark.innerHTML)
         controlTime('start')
         var item = event.target
+        // btnNum 0为左键，1为中建，右键为2
+        var btnNum = event.button
         var value = item.innerHTML
         //获取click的方格ID的数组编号
         var xIndex = parseInt(item.id.split('-')[1][0])
         var yIndex = parseInt(item.id.split('-')[1][1])
-        if(value == '雷') {
-            controlTime('stop')
-            removeHide(item)
-            //遍历出所有元素。
-            endshow()
-            alert('你输了')
+        //根据左右键执行不同程序
+        if(btnNum == 0) {
+            if(value == '雷') {
+                controlTime('stop')
+                removeHide(item)
+                //遍历出所有元素。
+                endshow()
+                alert('你输了')
+            }
+            else if(value == 0) {
+                //显示该格的8个按钮
+                judegeWin()
+                item.classList.add('showZero')
+                markAround2(divarray, xIndex, yIndex)
+            }else {
+                judegeWin()
+                removeHide(item)
+            }
         }
-        else if(value == 0) {
-            //显示该格的8个按钮
-            item.classList.add('showZero')
-            markAround2(divarray, xIndex, yIndex)
-        }else {
-            removeHide(item)
+        else if(btnNum == 2 ) {
+            if(num >= 0) {
+                downMark()
+                markFlag(item)
+            }
+            judegeWin()
         }
     })
 }
-
 
 var _main = function() {
     initShow()

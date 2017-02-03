@@ -320,6 +320,21 @@ var markFlag = function(item) {
     item.innerHTML = null
     appendHtml(item, template)
 }
+
+var markBoom = function() {
+    var template = `
+        <img src="./image/boom2.png" alt="1">
+    `
+    var single = document.querySelectorAll('.single')
+    for (var i = 0; i < single.length; i++) {
+        var item = single[i]
+        if(item.innerHTML == '雷') {
+            item.innerHTML = null
+            appendHtml(item, template)
+        }
+    }
+
+}
 var judegeWin = function() {
     var boom = getBoomNum()
     if(boom == 0){
@@ -344,6 +359,7 @@ var bindSingle = function() {
         //根据左右键执行不同程序
         if(btnNum == 0) {
             if(value == '雷') {
+                markBoom()
                 controlTime('stop')
                 removeHide(item)
                 //遍历出所有元素。

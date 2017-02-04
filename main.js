@@ -1,3 +1,37 @@
+var temSquare = function() {
+    var t = `
+            <div class="square">
+            `
+    return t
+}
+var temSingle = function(x, y) {
+    var t =`
+            <div  id='id-${x}${y}'class="single">
+            <span class='value'></span>
+            </div>
+    `
+    return t
+}
+
+var addSquare = function() {
+    var s = document.querySelector('.container')
+    var square = temSquare()
+    for (var i = 0; i < 10; i++) {
+        appendHtml(s, square)
+        }
+}
+
+var addSingle = function() {
+    var square = document.querySelectorAll('.square')
+    for (var i = 0; i < square.length; i++) {
+        for (var j = 0; j < 10; j++) {
+            var single = temSingle(i, j)
+            appendHtml(square[i], single)
+        }
+    }
+}
+
+
 // 复制一个 square
 var clonedSquare = function(array) {
     var s = []
@@ -143,7 +177,7 @@ var showNumber = function() {
 }
 
 var addHide = function() {
-    var elements = document.querySelectorAll('.single')
+    var elements = document.querySelectorAll('.value')
     for (var i = 0; i < elements.length; i++) {
         var e = elements[i]
         e.classList.add('hide')
@@ -152,14 +186,18 @@ var addHide = function() {
 
 // 把新建随机数组的值赋值到HTML里面
 var showArray = function(array) {
-    // var array = CreateBoomArray()
     var square = document.querySelectorAll('.square')
     for (var i = 0; i < 10; i++) {
         for (var j = 0; j < 10; j++) {
             var number = array[i][j]
+            // log('number',number)
             var id = '#id-'+String(i) + String(j)
             var s = document.querySelector(id)
-            s.innerHTML = number
+            var child = find(s, '.value')
+            child.innerText = array[i][j]
+            // log('child',child)
+            // var span = $(id).children('span')
+            // span.innerHTML = number
         }
     }
 }
@@ -170,16 +208,7 @@ var forbidRightShow = function() {
         return false
     }
 }
-var initShow = function() {
-    forbidRightShow()
-    //导入雷矩阵
-    var array = CreateBoomArray()
-    showArray(array)
-    //导入雷旁边的个数
-    var divarray = divArray()
-    var markarray = markedSquare(divarray)
-    showArray(markarray)
-}
+
 //从html里面获取数组
 var divArray = function() {
     var len = 10
@@ -190,10 +219,11 @@ var divArray = function() {
         for (var j = 0; j < width; j++) {
             var id = '#id-'+String(i) + String(j)
             var s = document.querySelector(id)
-            if(s.innerHTML != '雷') {
-                divarray[i][j] = parseInt(s.innerHTML)
+            var span =  s.children[0]
+            if(span.innerHTML != '雷') {
+                divarray[i][j] = parseInt(span.innerHTML)
             }else {
-                divarray[i][j] = s.innerHTML
+                divarray[i][j] = span.innerHTML
             }
         }
     }
@@ -211,6 +241,18 @@ var getBoomNum = function() {
         }
     }
     return boomNum
+}
+var initShow = function() {
+    addSquare()
+    addSingle()
+    forbidRightShow()
+    //导入雷矩阵
+    var array = CreateBoomArray()
+    showArray(array)
+    //导入雷旁边的个数
+    var divarray = divArray()
+    var markarray = markedSquare(divarray)
+    showArray(markarray)
 }
 
 //点击是0则显示zero样式
@@ -261,8 +303,9 @@ var markAround2 = function(array, x, y) {
         }
 }
 var removeHide = function(item) {
-    if(item.classList.contains('hide')){
-        item.classList.remove('hide')
+    var span = item.children[0]
+    if(span.classList.contains('hide')){
+        span.classList.remove('hide')
     }
 }
 /*
@@ -274,11 +317,12 @@ var endshow = function(item,divarray) {
     var all = document.querySelectorAll('.single')
     for (var i = 0; i < all.length; i++) {
         var single = all[i]
-        var value = single.innerHTML
-        if(value == 0) {
+        var value = single.children[0].innerHTML
+
+        if(value == 0 && !single.classList.contains('redFlag') && !single.classList.contains('boom')) {
             single.classList.add('showZero')
         }else {
-            single.classList.remove('hide')
+            single.children[0].classList.remove('hide')
         }
     }
 
@@ -301,39 +345,58 @@ var controlTime = function(index){
        clearInterval(timer1)
    }
 }
-var downMark = function() {
+var ChangeFlagNum = function(index) {
     var showMark = e('#id-showmark')
     var num = parseInt(showMark.innerHTML)
     if(num <= 0) {
         showMark.innerHTML= 0
     }else {
-        num -= 1
-        showMark.innerHTML = num
+        if (index =='down') {
+            num -= 1
+            showMark.innerHTML = num
+        } else if (index == 'up') {
+            num += 1
+            showMark.innerHTML = num
+        }
     }
 }
 
-var markFlag = function(item) {
-    var template = `
-        <img src="./image/红旗.png" alt="1">
-    `
-    var innerHTML = item.innerHTML
-    item.innerHTML = null
-    appendHtml(item, template)
+var markFlag = function(item, initNum) {
+    if (!item.classList.contains('redFlag')) {
+        var template = `
+            <img class='image' src="./image/红旗.png" alt="1">
+        `
+        var innerHTML = item.innerHTML
+        item.innerHTML = null
+        appendHtml(item, template)
+        ChangeFlagNum('down')
+    } else {
+        var template = `
+            <span class='hide'>${initNum}</span>
+        `
+        var innerHTML = item.innerHTML
+        item.innerHTML = null
+        appendHtml(item, template)
+        ChangeFlagNum('up')
+        item.classList.remove('redFlag')
+        return
+    }
+    item.classList.add('redFlag')
 }
 
 var markBoom = function() {
     var template = `
-        <img src="./image/boom2.png" alt="1">
+        <img src="./image/boom2.png" alt="">
     `
     var single = document.querySelectorAll('.single')
     for (var i = 0; i < single.length; i++) {
         var item = single[i]
-        if(item.innerHTML == '雷') {
+        var span = item.children[0]
+        if(span.innerHTML == '雷') {
             item.innerHTML = null
             appendHtml(item, template)
         }
     }
-
 }
 var judegeWin = function() {
     var boom = getBoomNum()
@@ -351,8 +414,11 @@ var bindSingle = function() {
         controlTime('start')
         var item = event.target
         // btnNum 0为左键，1为中建，右键为2
+        if(item.classList.contains('value') ||item.classList.contains('image')){
+            item = event.target.parentNode
+        }
         var btnNum = event.button
-        var value = item.innerHTML
+        var value = item.children[0].innerHTML
         //获取click的方格ID的数组编号
         var xIndex = parseInt(item.id.split('-')[1][0])
         var yIndex = parseInt(item.id.split('-')[1][1])
@@ -363,7 +429,7 @@ var bindSingle = function() {
                 controlTime('stop')
                 removeHide(item)
                 //遍历出所有元素。
-                endshow()
+                endshow(item)
                 alert('你输了')
             }
             else if(value == 0) {
@@ -376,15 +442,18 @@ var bindSingle = function() {
                 removeHide(item)
             }
         }
+        //right click
         else if(btnNum == 2 ) {
+            var initNum = divarray[xIndex][yIndex]
+            log('init',initNum)
             if(num >= 0) {
-                downMark()
-                markFlag(item)
+                markFlag(item, initNum)
             }
             judegeWin()
         }
     })
 }
+
 
 var _main = function() {
     initShow()

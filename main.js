@@ -55,14 +55,8 @@ const plus1 = function(array, x, y) {
         }
     }
 }
-
 // 辅助函数, 用来给 9 周边的 8 个格子 +1
 const markAround = function(array, x, y) {
-    /*
-    ###
-    ###
-    ###
-    */
     if (array[x][y] == '雷') {
         // 左边 3 个
         plus1(array, x - 1, y - 1)
@@ -79,28 +73,6 @@ const markAround = function(array, x, y) {
 }
 
 var markedSquare = function(array) {
-    /*
-    array 是一个「包含了『只包含了 0 9 的 array』的 array」
-    返回一个标记过的 array
-    ** 注意, 使用一个新数组来存储结果, 不要直接修改老数组
-
-    范例如下, 这是 array
-    [
-        [0, 9, 0, 0],
-        [0, 0, 9, 0],
-        [9, 0, 9, 0],
-        [0, 9, 0, 0],
-    ]
-
-    这是标记后的结果
-    [
-        [1, 9, 2, 1],
-        [2, 4, 9, 2],
-        [9, 4, 9, 2],
-        [2, 9, 2, 1],
-    ]
-    规则是, 0 会被设置为四周 8 个元素中 9 的数量
-    */
     var square = clonedSquare(array)
     for (var i = 0; i < square.length; i++) {
         var line = square[i]
@@ -158,10 +130,10 @@ var boom = function(array, n) {
     return array
 }
 //生成带雷矩阵
-var CreateBoomArray = function() {
+var CreateBoomArray = function(num) {
     var array = CreateArray()
     //设置随机雷的个数
-    var boomnum = 15
+    var boomnum = num
     var boomArray = boom(array,boomnum)
     return boomArray
 }
@@ -247,12 +219,27 @@ var initShow = function() {
     addSingle()
     forbidRightShow()
     //导入雷矩阵
-    var array = CreateBoomArray()
-    showArray(array)
-    //导入雷旁边的个数
-    var divarray = divArray()
-    var markarray = markedSquare(divarray)
+    var array = CreateBoomArray(15)
+    // showArray(array)
+    // //导入雷旁边的个数
+    // var divarray = divArray()
+    var markarray = markedSquare(array)
     showArray(markarray)
+    addHide()
+}
+var refresh = function(event) {
+    var container = e('.container')
+    var showMark = e('#id-showmark')
+    container.innerHTML = null
+    addSquare()
+    addSingle()
+    var item = event.target
+    var boom = parseInt(item.value)
+    showMark.innerHTML = boom
+    var array = CreateBoomArray(boom)
+    var markarray = markedSquare(array)
+    showArray(markarray)
+    addHide()
 }
 
 //点击是0则显示zero样式
@@ -301,6 +288,14 @@ var markAround2 = function(array, x, y) {
             var s = e(id)
             removeHide(s)
         }
+}
+var removeClassAll = function(className) {
+    var selector = '.' + className
+    var elements = document.querySelectorAll(selector)
+    for (var i = 0; i < elements.length; i++) {
+        var e = elements[i]
+        e.classList.remove(className)
+    }
 }
 var removeHide = function(item) {
     var span = item.children[0]
@@ -453,12 +448,23 @@ var bindSingle = function() {
         }
     })
 }
+//
+var bindButtons = function(selector, eventName, callback){
+	var elements = document.querySelectorAll(selector)
+    for (var i = 0; i < elements.length; i++) {
+        var button = elements[i]
+        var createBoom = button.value
+        log('createBoom',createBoom)
+        bindEvent(button, 'click', callback )
+    }
+
+}
 
 
 var _main = function() {
     initShow()
-    addHide()
     bindSingle()
+    bindButtons('button', 'click',refresh)
 }
 
 _main()

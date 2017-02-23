@@ -18,7 +18,7 @@ var addSquare = function() {
     var square = temSquare()
     for (var i = 0; i < 10; i++) {
         appendHtml(s, square)
-        }
+    }
 }
 
 var addSingle = function() {
@@ -32,7 +32,6 @@ var addSingle = function() {
 }
 
 
-// 复制一个 square
 var clonedSquare = function(array) {
     var s = []
     for (var i = 0; i < array.length; i++) {
@@ -252,7 +251,7 @@ var plus2 = function(array, x, y) {
          if (array[x][y] == 0 && !judge0) {
             s.classList.add('showZero')
                 //点击为0 则递归处理这个格子外面的8个格子
-                markAround2(array, x, y)
+            markAround2(array, x, y)
          }
          else if(array[x][y] != 0 && array[x][y] !='雷') {
              //出现数字则显示出雷的个数
@@ -265,11 +264,7 @@ var plus2 = function(array, x, y) {
     }
 }
 var markAround2 = function(array, x, y) {
-    /*
-    ###
-    ###
-    ###
-    */
+
         // 左边 3 个
         if(array[x][y] == 0 ){
             plus2(array, x - 1, y - 1)
@@ -283,7 +278,8 @@ var markAround2 = function(array, x, y) {
             plus2(array, x + 1, y)
             plus2(array, x + 1, y + 1)
         }
-        else if(array[x][y] != 0) {
+        else if(array[x][y] != 0 && array[x][y] != '雷') {
+            console.log('出现问题', array[x][y])
             var id = '#id-'+String(x) + String(y)
             var s = e(id)
             removeHide(s)
@@ -313,7 +309,6 @@ var endshow = function(item,divarray) {
     for (var i = 0; i < all.length; i++) {
         var single = all[i]
         var value = single.children[0].innerHTML
-
         if(value == 0 && !single.classList.contains('redFlag') && !single.classList.contains('boom')) {
             single.classList.add('showZero')
         }else {
@@ -322,7 +317,6 @@ var endshow = function(item,divarray) {
     }
 
 }
-
 var addTime = function() {
     var startTime = e('#start-time')
     var time = parseInt(startTime.innerHTML)
@@ -414,6 +408,7 @@ var bindSingle = function() {
         }
         var btnNum = event.button
         var value = item.children[0].innerHTML
+        log('value', value)
         //获取click的方格ID的数组编号
         var xIndex = parseInt(item.id.split('-')[1][0])
         var yIndex = parseInt(item.id.split('-')[1][1])
@@ -425,7 +420,7 @@ var bindSingle = function() {
                 removeHide(item)
                 //遍历出所有元素。
                 endshow(item)
-                alert('你输了')
+                toolTip('提示','你输了！',callback)
             }
             else if(value == 0) {
                 //显示该格的8个按钮
@@ -433,6 +428,7 @@ var bindSingle = function() {
                 item.classList.add('showZero')
                 markAround2(divarray, xIndex, yIndex)
             }else {
+                log('cowu')
                 judegeWin()
                 removeHide(item)
             }
@@ -454,10 +450,8 @@ var bindButtons = function(selector, eventName, callback){
     for (var i = 0; i < elements.length; i++) {
         var button = elements[i]
         var createBoom = button.value
-        log('createBoom',createBoom)
         bindEvent(button, 'click', callback )
     }
-
 }
 
 

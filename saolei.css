@@ -1,0 +1,122 @@
+.game{
+    position: relative;
+    width: 360px;
+    height: 400px;
+    margin: 0 auto;
+    border: 1px solid #27cdf0;
+    margin-top: 5%;
+    border-radius: 2%;
+    box-shadow: 4px 4px 8px #888;
+}
+.container {
+    position: relative;
+    width: 302px;
+    height:300px;
+    border: 1px solid #27cdf0;
+    margin: 0 auto;
+    margin-top: 7%;
+}
+.square{
+    box-sizing: border-box;
+    height:30px;
+    border: 1px solid #27cdf0;
+}
+.single {
+    text-align: center;
+    box-sizing: border-box;
+    display: inline-block;
+    float: left;
+    width: 30px;
+    height: 30px;
+    margin:0;
+    padding-top: 5px;
+}
+.single + .single{
+    border-left:1px solid #27cdf0;
+}
+.single > span {
+    width: 100%;
+    height: 100%;
+}
+.number{
+    display: inline-block;
+    padding-top: 5px;
+}
+.hide{
+    display: none;
+}
+.showZero{
+    background-color: #393030;
+    opacity: 0.3;
+    border: 1px solid#27cdf0;
+    box-sizing: border-box;
+}
+.topShow {
+    height:50px;
+    display: flex;
+    border-bottom: 1px solid #27cdf0;
+}
+.item{
+    display: flex;
+    flex: 1;
+    justify-content: center;
+    align-items: center;
+}
+.item:nth-child(2){
+    flex:0.4
+}
+
+.item + .item {
+    border-left: 1px solid #27cdf0;
+}
+.spanItem{
+    flex-grow: 0.5;
+    text-align: center;
+}
+.item img{
+    width: 65%;
+}
+.single img{
+    width: 70%;
+}
+.mark{
+    background-color: crimson;
+    border: 1px solid #27cdf0;
+}
+/*.red-flag {
+    background-image: url(./image/红旗.png);
+    background-repeat: none;
+    background-size: contain;
+}*/
+.single img{
+    width: 100%;
+    position: relative;
+    bottom:5px;
+}
+
+.single:hover{
+    background: #cdf;
+    border-bottom: 1px solid #27cdf0;
+}
+.showZero:hover{
+    background-color: #393030;
+}
+.buttons{
+    position: relative;
+    margin-top: 15%;
+}
+button{
+    display: block;
+    width: 120px;
+    height: 30px;
+    border-radius: 7px;
+    border: none;
+    background: #2196F3;
+    color: white;
+    font-size: 19px;
+    box-shadow: 2px 2px 1px #888;
+    margin: 10px auto;
+}
+button:hover{
+    background: #2186F3;
+}
